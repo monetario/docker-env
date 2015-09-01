@@ -1,0 +1,4 @@
+
+DB_DATABASE=monetario_dev
+DB_USERNAME=moneykeeper
+DB_PASSWORD=secret-key

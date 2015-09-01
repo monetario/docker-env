@@ -1,0 +1,41 @@
+nginx:
+  restart: always
+  build: ./nginx
+  ports:
+    - "80:80"
+
+api:
+  container_name: api
+  restart: always
+  build: ./api
+  env_file: .environment
+  expose:
+    - "8000"
+  command: python manage.py runserver -p 8000
+
+web:
+  container_name: web
+  restart: always
+  build: ./web
+  expose:
+    - "9000"
+  command: python manage.py runserver -p 9000
+
+postgres:
+  container_name: postgres
+  restart: always
+  build: ./postgres
+  ports:
+    - "5432"
+
+pgdata:
+  image: busybox
+  restart: always
+  volumes:
+    - /var/lib/postgresql
+  command: "true"
+
+redis:
+  container_name: redis
+  restart: always
+  image: redis:latest
