@@ -2,7 +2,7 @@ server {
         listen 80;
         server_name .monetario.local;
         client_max_body_size 10M;
-        location /API {
+        location /API/ {
                 proxy_pass          http://api:8000/;
                 proxy_pass_header   Server;
                 proxy_set_header    Host                $http_host;
