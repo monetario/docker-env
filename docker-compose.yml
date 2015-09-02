@@ -3,6 +3,9 @@ nginx:
   build: ./nginx
   ports:
     - "80:80"
+  links:
+    - api:api
+    - web:web
 
 api:
   container_name: api
@@ -13,7 +16,9 @@ api:
     - ./api/core:/opt/monetario-core
   expose:
     - "8000"
-  command: python manage.py runserver -p 8000
+  links:
+    - postgres:postgres
+  command: python manage.py runserver -h 0.0.0.0 -p 8000
 
 web:
   container_name: web
@@ -23,7 +28,7 @@ web:
     - ./web/web:/opt/monetario-web
   expose:
     - "9000"
-  command: python manage.py runserver -p 9000
+  command: python manage.py runserver -h 0.0.0.0 -p 9000
 
 postgres:
   container_name: postgres
