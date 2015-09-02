@@ -23,4 +23,4 @@ docker-compose up -d
 echo "\nEverything done. Application should be avaliable on IP"
 docker-machine ip $MACHINE_NAME
 
-echo "Nginx is configured to use `monetario.local` name, update you `hosts` file"
+echo "Nginx is configured to use 'monetario.local' name, update you 'hosts' file"
