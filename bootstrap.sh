@@ -1,0 +1,26 @@
+# /bin/bash
+
+MACHINE_NAME=MonetarioDev
+
+echo "\nCreating docker-machine with vagrant backend...\n"
+docker-machine create -d virtualbox $MACHINE_NAME
+
+echo "\nActivating newly created machine...\n"
+eval "$(docker-machine env ${MACHINE_NAME})"
+
+echo "\nDownloading core API repository...\n"
+git clone git@github.com:monetario/core.git api/core
+
+echo "\nDownloading basic web client...\n"
+git clone git@github.com:monetario/web.git web/web
+
+echo "\nBuilding docker containers...\n"
+docker-compose build
+
+echo "\nRunning containers...\n"
+docker-compose up -d
+
+echo "\nEverything done. Application should be avaliable on IP"
+docker-machine ip $MACHINE_NAME
+
+echo "Nginx is configured to use `monetario.local` name, update you `hosts` file"
