@@ -2,3 +2,6 @@
 DB_DATABASE=monetario_dev
 DB_USERNAME=moneykeeper
 DB_PASSWORD=secret-key
+DB_URI=postgres://rentikouser:rentikopass2013@localhost/rentiko
+SERVER_NAME=monetario.local
+SECRET_KEY=just_a_very_long_key
