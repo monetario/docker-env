@@ -5,9 +5,6 @@ __pycache__/
 # C extensions
 *.so
 
-api/core
-web/web
-
 # Distribution / packaging
 .Python
 env/
@@ -17,6 +14,8 @@ dist/
 downloads/
 eggs/
 .eggs/
+/core
+/web
 lib/
 lib64/
 parts/

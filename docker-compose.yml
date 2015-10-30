@@ -1,6 +1,8 @@
 nginx:
   restart: always
-  build: ./nginx
+  build: nginx
+  volumes:
+    - ./nginx/sites-enabled:/etc/nginx/sites-enabled
   ports:
     - "80:80"
   links:
@@ -10,12 +12,12 @@ nginx:
 api:
   container_name: api
   restart: always
-  build: ./api
+  image: monetario/api
   env_file: .environment
   volumes:
-    - ./api/core:/opt/monetario-core
+    - ./core:/opt/monetario/core
   expose:
-    - "8000"
+    - "8000:8000"
   links:
     - postgres:postgres
   command: python manage.py runserver -h 0.0.0.0 -p 8000
@@ -23,11 +25,11 @@ api:
 web:
   container_name: web
   restart: always
-  build: ./web
+  image: monetario/web
   volumes:
-    - ./web/web:/opt/monetario-web
+    - ./web:/opt/monetario/web
   expose:
-    - "9000"
+    - "9000:9000"
   command: python manage.py runserver -h 0.0.0.0 -p 9000
 
 postgres:
@@ -35,7 +37,7 @@ postgres:
   restart: always
   build: ./postgres
   ports:
-    - "5432"
+    - "5432:5432"
 
 pgdata:
   image: busybox
@@ -48,3 +50,5 @@ redis:
   container_name: redis
   restart: always
   image: redis:latest
+  ports:
+    - "6379:6379"
