@@ -1,54 +1,71 @@
-nginx:
-  restart: always
-  build: nginx
-  volumes:
-    - ./nginx/sites-enabled:/etc/nginx/sites-enabled
-  ports:
-    - "80:80"
-  links:
-    - api:api
-    - web:web
+version: '2'
 
-api:
-  container_name: api
-  restart: always
-  image: monetario/api
-  env_file: .environment
-  volumes:
-    - ./core:/opt/monetario/core
-  expose:
-    - "8000:8000"
-  links:
-    - postgres:postgres
-  command: python manage.py runserver -h 0.0.0.0 -p 8000
+services:
+  nginx:
+    restart: always
+    build: nginx
+    volumes:
+      - ./nginx/sites-enabled:/etc/nginx/sites-enabled
+    ports:
+      - "80:80"
+    links:
+      - api:api
+      - web:web
 
-web:
-  container_name: web
-  restart: always
-  image: monetario/web
-  volumes:
-    - ./web:/opt/monetario/web
-  expose:
-    - "9000:9000"
-  command: python manage.py runserver -h 0.0.0.0 -p 9000
+  api:
+    container_name: api
+    restart: always
+#    image: monetario/api
+    build: ./core
+    env_file: .environment
+    volumes:
+      - ./core:/opt/monetario/core
+    expose:
+      - "8000/tcp"
+    ports:
+      - "8000:8000"
+    links:
+      - postgres:postgres
+    depends_on:
+      - postgres
+    command: python manage.py runserver -h 0.0.0.0 -p 8000
 
-postgres:
-  container_name: postgres
-  restart: always
-  build: ./postgres
-  ports:
-    - "5432:5432"
+  web:
+    container_name: web
+    restart: always
+    image: monetario/web
+    volumes:
+      - ./web:/opt/monetario/web
+    expose:
+      - "9000/tcp"
+    ports:
+      - "9000:9000"
+    depends_on:
+      - api
+    command: python manage.py runserver -h 0.0.0.0 -p 9000
 
-pgdata:
-  image: busybox
-  restart: always
-  volumes:
-    - /var/lib/postgresql
-  command: "true"
+  redis:
+    restart: always
+    image: redis:latest
+    volumes:
+      - redisdatavolume:/var/lib/redis
+    ports:
+      - "6379:6379"
 
-redis:
-  container_name: redis
-  restart: always
-  image: redis:latest
-  ports:
-    - "6379:6379"
+  postgres:
+    container_name: postgres
+    restart: always
+    build: ./postgres
+    volumes:
+      - postgresdatavolume:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432/tcp"
+
+volumes:
+  postgresdatavolume:
+    driver: local
+
+  redisdatavolume:
+    driver: local
